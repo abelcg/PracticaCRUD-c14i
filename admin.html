@@ -10,9 +10,9 @@
   </head>
   <body>
     <header>
-      <nav class="navbar navbar-expand-lg bg-light">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">Navbar</a>
+          <a class="navbar-brand" href="#">CRUD</a>
           <button
             class="navbar-toggler"
             type="button"
@@ -50,8 +50,15 @@
               type="text"
               class="form-control"
               id="codigo"
-              placeholder="1234"
+              placeholder="1234add"
+              maxlength="10"
+              minlength="1"
+              required
+              keyFilter="/^[0-9]{1,5}$/"
             />
+            <div class="invalid-feedback">
+              Debe ingresar un código alfanumerico
+            </div>
           </div>
           <div class="mb-3">
             <label for="producto" class="form-label">Producto</label>
@@ -86,6 +93,9 @@
           </div>
           <button class="btn btn-primary" type="submit">Guardar</button>
         </form>
+        <div class="alert alert-danger my-3 d-none" role="alert" id="mjeAlerta">
+          Debe completar todos los campos rqueridos
+        </div>
       </section>
     </main>
     <footer></footer>
