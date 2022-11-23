@@ -56,8 +56,7 @@ const validarGeneral = (
   campoCantidad,
   campoUrl
 ) => {
-  //prevenir el actualizar del submit
-
+ 
   //comprobar que pasen cada una validaciones y si no pasan mostrar el alert
   // console.log('desde validar general');
   //console.log(e);
@@ -80,6 +79,7 @@ const validarGeneral = (
 };
 
 const guardarProducto = (e) => {
+   //prevenir el actualizar del submit
   e.preventDefault();
   if (
     validarGeneral(
