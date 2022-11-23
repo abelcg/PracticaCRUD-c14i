@@ -54,7 +54,6 @@
               maxlength="10"
               minlength="1"
               required
-              keyFilter="/^[0-9]{1,5}$/"
             />
             <div class="invalid-feedback">
               Debe ingresar un código alfanumerico
@@ -67,6 +66,8 @@
               class="form-control"
               id="producto"
               placeholder="ej: Iron Man"
+              maxlength="20"
+              required
             />
           </div>
           <div class="mb-3">
@@ -80,6 +81,8 @@
               class="form-control"
               id="cantidad"
               placeholder="2"
+              maxlength="5"
+              required
             />
           </div>
           <div class="mb-3">
@@ -89,6 +92,8 @@
               class="form-control"
               id="URL"
               placeholder="http://imagen.com"
+              maxlength="200"
+              required
             />
           </div>
           <button class="btn btn-primary" type="submit">Guardar</button>

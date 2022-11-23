@@ -56,9 +56,42 @@ const validarGeneral = (
   campoCantidad,
   campoUrl
 ) => {
-    //prevenir el actualizar del submit
+ 
+  //comprobar que pasen cada una validaciones y si no pasan mostrar el alert
+  // console.log('desde validar general');
+  //console.log(e);
+  let alerta = document.querySelector("#mjeAlerta");
+  if (
+    campoRequerido(campoCodigo) &&
+    campoRequerido(campoProducto) &&
+    campoRequerido(campoDescripcion) &&
+    validarNumeros(campoCantidad) &&
+    validarURL(campoUrl)
+  ) {
+    console.log("validación correcta los datos están listo para ser enviados");
+    alerta.className = "alert alert-danger mt-4 d-none";
+    return true;
+  } else {
+    console.log("validación incorrecta");
+    alerta.className = "alert alert-danger mt-4";
+    return false;
+  }
+};
 
-    //comprobar que pasen cada una validaciones y si no pasan mostrar el alert
+const guardarProducto = (e) => {
+   //prevenir el actualizar del submit
+  e.preventDefault();
+  if (
+    validarGeneral(
+      campoCodigo,
+      campoProducto,
+      campoDescripcion,
+      campoCantidad,
+      campoUrl
+    )
+  ) {
+    console.log("los datos fueron enviados correctamente")
+  }
 };
 
 //asociar un evento a cada elemento obtenido
@@ -83,3 +116,5 @@ campoUrl.addEventListener("blur", () => {
   console.log("desde url");
   validarURL(campoUrl);
 });
+
+formularioProducto.addEventListener("submit", guardarProducto);
