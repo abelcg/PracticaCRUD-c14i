@@ -1,99 +1,22 @@
+import {
+  campoRequerido,
+  validarNumeros,
+  validarURL,
+  validarGeneral,
+} from "./validaciones.js";
+import { Producto } from "./productoClass.js";
+
 //traigo los elementos que necesito del html
 let campoCodigo = document.getElementById("codigo");
-console.log(campoCodigo);
+//console.log(campoCodigo);
 let campoProducto = document.getElementById("producto");
 let campoDescripcion = document.getElementById("descripcion");
 let campoCantidad = document.getElementById("cantidad");
 let campoUrl = document.getElementById("URL");
 let formularioProducto = document.querySelector("#formProduto");
 
-//validaciones
-const campoRequerido = (input) => {
-  console.log("desde campo requerido");
-  console.log(input.value);
-  if (input.value.trim().length > 0) {
-    console.log("aqui esta todo bien");
-    input.className = "form-control is-valid";
-    return true;
-  } else {
-    console.log("aqui muestro un error");
-    input.className = "form-control is-invalid";
-    return false;
-  }
-};
-
-const validarNumeros = (input) => {
-  //vamos a crear una expresión regular
-  let patron = /^[0-9]{1,5}$/;
-  //el metodo test --> devuelve true o false si matchea o no
-  //regex.test(string a validar)
-  if (patron.test(input.value)) {
-    //cumpla con la expresion regular
-    input.className = "form-control is-valid";
-    return true;
-  } else {
-    input.className = "form-control is-invalid";
-    return false;
-  }
-};
-
-const validarURL = (input) => {
-  let patron = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
-  if (patron.test(input.value)) {
-    //cumpla con la expresion regular
-    input.className = "form-control is-valid";
-    return true;
-  } else {
-    input.className = "form-control is-invalid";
-    return false;
-  }
-};
-
-const validarGeneral = (
-  campoCodigo,
-  campoProducto,
-  campoDescripcion,
-  campoCantidad,
-  campoUrl
-) => {
- 
-  //comprobar que pasen cada una validaciones y si no pasan mostrar el alert
-  // console.log('desde validar general');
-  //console.log(e);
-  let alerta = document.querySelector("#mjeAlerta");
-  if (
-    campoRequerido(campoCodigo) &&
-    campoRequerido(campoProducto) &&
-    campoRequerido(campoDescripcion) &&
-    validarNumeros(campoCantidad) &&
-    validarURL(campoUrl)
-  ) {
-    console.log("validación correcta los datos están listo para ser enviados");
-    alerta.className = "alert alert-danger mt-4 d-none";
-    return true;
-  } else {
-    console.log("validación incorrecta");
-    alerta.className = "alert alert-danger mt-4";
-    return false;
-  }
-};
-
-const guardarProducto = (e) => {
-   //prevenir el actualizar del submit
-  e.preventDefault();
-  if (
-    validarGeneral(
-      campoCodigo,
-      campoProducto,
-      campoDescripcion,
-      campoCantidad,
-      campoUrl
-    )
-  ) {
-    console.log("los datos fueron enviados correctamente")
-  }
-};
-
+let productoExistente = false; //variable bandera: si es false quiere crear producto y si true quiero modicar Producto
+let listaProductos = [];
 //asociar un evento a cada elemento obtenido
 
 campoCodigo.addEventListener("blur", () => {
@@ -118,3 +41,61 @@ campoUrl.addEventListener("blur", () => {
 });
 
 formularioProducto.addEventListener("submit", guardarProducto);
+
+//empieza la lógica del crud
+
+function guardarProducto(e) {
+  //prevenir el actualizar del submit
+  e.preventDefault();
+  //verificar que todos los datos sean validos
+  if (
+    validarGeneral(
+      campoCodigo,
+      campoProducto,
+      campoDescripcion,
+      campoCantidad,
+      campoUrl
+    )
+  ) {
+    // console.log("los datos fueron enviados correctamente");
+    if (productoExistente === false) {
+      //crear producto
+      crearProducto();
+    } else {
+      //modificar producto
+      modificarProducto();
+    }
+  }
+}
+
+function crearProducto() {
+  //crear un objeto producto
+  let productoNuevo = new Producto(
+    campoCodigo.value,
+    campoProducto.value,
+    campoDescripcion.value,
+    campoCantidad.value,
+    campoUrl.value
+  );
+  
+  console.log(productoNuevo);
+  //guardar cada objeto (producto) en un array de productos
+  listaProductos.push(productoNuevo);
+  console.log(listaProductos);
+  //limpiar formulario
+  limpiarFormulario();
+}
+
+function limpiarFormulario() {
+ //limpiamos los value del formulario
+ formularioProducto.reset();
+ //resetear las clases de los input
+ campoCodigo.className = "form-control";
+ campoProducto.className = "form-control";
+ campoDescripcion.className = "form-control";
+ campoCantidad.className = "form-control";
+ campoUrl.className = "form-control";
+
+ //resetear la variable bandera o booleana para el caso de modificarProducto
+ productoExistente = false;
+};
