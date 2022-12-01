@@ -197,3 +197,31 @@ function borrarTabla(){
   let tablaProducto = document.querySelector("#tablaProducto");
   tablaProducto.innerHTML = '' 
 }
+
+window.borrarProducto = function(codigo){
+  console.log('desde borrar producto');
+  console.log(codigo);
+  //encontrar la posicion del elemento en el array y borrarlo
+  //opcion 1 encontrar el indice con findIndex y usar splice(indice,1);
+  //opcion 2 usando filter
+  let nuevaListaProducto = listaProductos.filter((itemProducto)=>{
+    return itemProducto.codigo !== codigo
+  });
+
+  console.log(nuevaListaProducto);
+  //actualizar el arreglo original y el localStorage
+  listaProductos = nuevaListaProducto;
+  guardarLocalStorage();
+
+   //actualizar la tabla 
+   borrarTabla();
+   cargaInicial();
+
+   //mostrar cartel al usuario
+   Swal.fire(
+     'Producto eliminado!',
+     'Su producto fue eliminado correctamente',
+     'success'
+   )
+};
+
