@@ -16,7 +16,7 @@ let campoUrl = document.getElementById("URL");
 let formularioProducto = document.querySelector("#formProduto");
 
 let productoExistente = false; //variable bandera: si es false quiere crear producto y si true quiero modicar Producto
-//Si hay productos en localstorage, quiero guardar en el arrya de productos y si no que sea un array vacio.
+//Si hay productos en localstorage, quiero guardar en el array de productos y si no que sea un array vacio.
 let listaProductos = JSON.parse(localStorage.getItem("arrayProductoKey")) || [];
 
 //asociar un evento a cada elemento obtenido
@@ -91,6 +91,12 @@ function crearProducto() {
   limpiarFormulario();
   //guardar el array de productos dentro de localStorage
   guardarLocalStorage();
+  //mostrar un cartel al usuario
+  Swal.fire(
+    'Producto creado!',
+    'Su producto fue creado correctamente',
+    'success'
+  )
   //cargar el/los productos en la tabla
   crearFila(productoNuevo);
 }
@@ -123,15 +129,71 @@ function crearFila(producto) {
   <td>${producto.cantidad}</td>
   <td>${producto.url}</td>
   <td>
-      <button class="btn btn-warning">Editar</button>
-      <button class="btn btn-danger">Borrar</button>
-  </td>
+    <button class="btn btn-warning" onclick="prepararEdicionProducto('${producto.codigo}')">Editar</button>
+    <button class="btn btn-danger" onclick='borrarProducto("${producto.codigo}")'>Borrar</button>
+ </td>
 </tr>`;
 }
 
 function cargaInicial() { 
  if(listaProductos.length > 0){
   //crear filas
-  listaProductos.forEach((itemProducto) => {crearFila(itemProducto);});
+  //listaProductos.forEach((itemProducto) => {crearFila(itemProducto);});
+  listaProductos.map((itemProducto) => {crearFila(itemProducto);});
  }
+};
+
+
+window.prepararEdicionProducto = function(codigo){
+  console.log("desde editar");
+  console.log(codigo);
+  //buscar el producto en el array 
+  let productoBuscado = listaProductos.find((itemProducto)=> {
+    return itemProducto.codigo === codigo;
+  });
+  console.log(productoBuscado);
+  //mostrar el producto en el formulario de Producto
+  campoCodigo.value = productoBuscado.codigo;
+  campoProducto.value = productoBuscado.producto;
+  campoDescripcion.value = productoBuscado.descripcion;
+  campoCantidad.value = productoBuscado.cantidad;
+  campoUrl.value = productoBuscado.url;
+
+  //cambiar la variable bandera productoExistente
+  productoExistente = true;
+}
+
+function modificarProducto(){
+  console.log('desde modificar producto');
+  //encontrar la posicion del elemento que quiero modificar dentro del array de productos
+  let indiceProducto = listaProductos.findIndex((itemProducto)=>{
+    return itemProducto.codigo === campoCodigo.value;
+  });
+
+  console.log(indiceProducto);
+  //modificar los valores dentro del elemento del array de productos
+  listaProductos[indiceProducto].producto = campoProducto.value;
+  listaProductos[indiceProducto].descripcion = campoDescripcion.value;
+  listaProductos[indiceProducto].cantidad = campoCantidad.value;
+  listaProductos[indiceProducto].url = campoUrl.value;
+
+  //actualizar el localStorage
+  guardarLocalStorage();
+  //actualizar la tabla 
+  borrarTabla();
+  cargaInicial();
+  //mostrar cartel al usuario
+  Swal.fire(
+    'Producto modificado!',
+    'Su producto fue modificado correctamente',
+    'success'
+  )
+  //limpiar el formulario
+  limpiarFormulario();
+};
+
+
+function borrarTabla(){
+  let tablaProducto = document.querySelector("#tablaProducto");
+  tablaProducto.innerHTML = '' 
 }
