@@ -14,6 +14,7 @@ let campoDescripcion = document.getElementById("descripcion");
 let campoCantidad = document.getElementById("cantidad");
 let campoUrl = document.getElementById("URL");
 let formularioProducto = document.querySelector("#formProduto");
+let btnNuevo = document.getElementById("btnNuevo");
 
 let productoExistente = false; //variable bandera: si es false quiere crear producto y si true quiero modicar Producto
 //Si hay productos en localstorage, quiero guardar en el array de productos y si no que sea un array vacio.
@@ -42,6 +43,7 @@ campoUrl.addEventListener("blur", () => {
 });
 
 formularioProducto.addEventListener("submit", guardarProducto);
+btnNuevo.addEventListener("click", limpiarFormulario);
 
 //invoco a cargaInicial: si tengo productos en el localStorage los mustra en la tabla.
 cargaInicial();
@@ -93,10 +95,10 @@ function crearProducto() {
   guardarLocalStorage();
   //mostrar un cartel al usuario
   Swal.fire(
-    'Producto creado!',
-    'Su producto fue creado correctamente',
-    'success'
-  )
+    "Producto creado!",
+    "Su producto fue creado correctamente",
+    "success"
+  );
   //cargar el/los productos en la tabla
   crearFila(productoNuevo);
 }
@@ -135,20 +137,21 @@ function crearFila(producto) {
 </tr>`;
 }
 
-function cargaInicial() { 
- if(listaProductos.length > 0){
-  //crear filas
-  //listaProductos.forEach((itemProducto) => {crearFila(itemProducto);});
-  listaProductos.map((itemProducto) => {crearFila(itemProducto);});
- }
-};
+function cargaInicial() {
+  if (listaProductos.length > 0) {
+    //crear filas
+    //listaProductos.forEach((itemProducto) => {crearFila(itemProducto);});
+    listaProductos.map((itemProducto) => {
+      crearFila(itemProducto);
+    });
+  }
+}
 
-
-window.prepararEdicionProducto = function(codigo){
+window.prepararEdicionProducto = function (codigo) {
   console.log("desde editar");
   console.log(codigo);
-  //buscar el producto en el array 
-  let productoBuscado = listaProductos.find((itemProducto)=> {
+  //buscar el producto en el array
+  let productoBuscado = listaProductos.find((itemProducto) => {
     return itemProducto.codigo === codigo;
   });
   console.log(productoBuscado);
@@ -161,67 +164,89 @@ window.prepararEdicionProducto = function(codigo){
 
   //cambiar la variable bandera productoExistente
   productoExistente = true;
-}
-
-function modificarProducto(){
-  console.log('desde modificar producto');
-  //encontrar la posicion del elemento que quiero modificar dentro del array de productos
-  let indiceProducto = listaProductos.findIndex((itemProducto)=>{
-    return itemProducto.codigo === campoCodigo.value;
-  });
-
-  console.log(indiceProducto);
-  //modificar los valores dentro del elemento del array de productos
-  listaProductos[indiceProducto].producto = campoProducto.value;
-  listaProductos[indiceProducto].descripcion = campoDescripcion.value;
-  listaProductos[indiceProducto].cantidad = campoCantidad.value;
-  listaProductos[indiceProducto].url = campoUrl.value;
-
-  //actualizar el localStorage
-  guardarLocalStorage();
-  //actualizar la tabla 
-  borrarTabla();
-  cargaInicial();
-  //mostrar cartel al usuario
-  Swal.fire(
-    'Producto modificado!',
-    'Su producto fue modificado correctamente',
-    'success'
-  )
-  //limpiar el formulario
-  limpiarFormulario();
 };
 
+function modificarProducto() {
+  console.log("desde modificar producto");
+  Swal.fire({
+    title: "¿Seguro qué desea modificar este producto?",
+    text: "Esta acción no podra ser revertida!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Confirmar!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      //encontrar la posicion del elemento que quiero modificar dentro del array de productos
+      let indiceProducto = listaProductos.findIndex((itemProducto) => {
+        return itemProducto.codigo === campoCodigo.value;
+      });
 
-function borrarTabla(){
+      console.log(indiceProducto);
+      //modificar los valores dentro del elemento del array de productos
+      listaProductos[indiceProducto].producto = campoProducto.value;
+      listaProductos[indiceProducto].descripcion = campoDescripcion.value;
+      listaProductos[indiceProducto].cantidad = campoCantidad.value;
+      listaProductos[indiceProducto].url = campoUrl.value;
+
+      //actualizar el localStorage
+      guardarLocalStorage();
+      //actualizar la tabla
+      borrarTabla();
+      cargaInicial();
+      //mostrar cartel al usuario
+      Swal.fire(
+        "Producto modificado!",
+        "Su producto fue modificado correctamente",
+        "success"
+      );
+      //limpiar el formulario
+      limpiarFormulario();
+    }
+  });
+}
+
+function borrarTabla() {
   let tablaProducto = document.querySelector("#tablaProducto");
-  tablaProducto.innerHTML = '' 
+  tablaProducto.innerHTML = "";
 }
 
-window.borrarProducto = function(codigo){
-  console.log('desde borrar producto');
+window.borrarProducto = function (codigo) {
+  console.log("desde borrar producto");
   console.log(codigo);
-  //encontrar la posicion del elemento en el array y borrarlo
-  //opcion 1 encontrar el indice con findIndex y usar splice(indice,1);
-  //opcion 2 usando filter
-  let nuevaListaProducto = listaProductos.filter((itemProducto)=>{
-    return itemProducto.codigo !== codigo
+  Swal.fire({
+    title: "¿Seguro qué desea borrar este producto?",
+    text: "Esta acción no podra ser revertida!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Confirmar!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      //encontrar la posicion del elemento en el array y borrarlo
+      //opcion 1 encontrar el indice con findIndex y usar splice(indice,1);
+      //opcion 2 usando filter
+      let nuevaListaProducto = listaProductos.filter((itemProducto) => {
+        return itemProducto.codigo !== codigo;
+      });
+
+      console.log(nuevaListaProducto);
+      //actualizar el arreglo original y el localStorage
+      listaProductos = nuevaListaProducto;
+      guardarLocalStorage();
+
+      //actualizar la tabla
+      borrarTabla();
+      cargaInicial();
+
+      //mostrar cartel al usuario
+      Swal.fire(
+        "Producto eliminado!",
+        "Su producto fue eliminado correctamente",
+        "success"
+      );
+    }
   });
-
-  console.log(nuevaListaProducto);
-  //actualizar el arreglo original y el localStorage
-  listaProductos = nuevaListaProducto;
-  guardarLocalStorage();
-
-   //actualizar la tabla 
-   borrarTabla();
-   cargaInicial();
-
-   //mostrar cartel al usuario
-   Swal.fire(
-     'Producto eliminado!',
-     'Su producto fue eliminado correctamente',
-     'success'
-   )
 };
-
